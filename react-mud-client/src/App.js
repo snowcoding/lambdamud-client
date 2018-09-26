@@ -39,7 +39,7 @@ class App extends Component {
       <div className="App">
 
         {/* How to send a prop down to component within a route */}
-        <Route exact path="/register" component={() => <Register initPlayer={this.initPlayer} /> } />
+        <Route exact path="/register" component={(props) => <Register initPlayer={this.initPlayer} {...props}/> } />
         
         
         <Route exact path="/" render={(props) => this.state.userAuthToken ? 
@@ -47,8 +47,13 @@ class App extends Component {
                         <Route path="/adventure" component={Adventure} /> : 
                         <Redirect to="/login" /> }/>
 
-        <Route exact path="/login" component={Login} />
-        <Route path="/adventure" component={Adventure} />
+        <Route exact path="/login" component={(props) => <Login initPlayer={this.initPlayer} {...props}/>} />
+        
+        <Route path="/adventure" component={() => <Adventure uuid={this.state.uuid} 
+                                                            name={this.state.name} 
+                                                            players={this.state.players}
+                                                            title={this.state.title}
+                                                            desc={this.state.description}/>} />
         
       </div>
     );

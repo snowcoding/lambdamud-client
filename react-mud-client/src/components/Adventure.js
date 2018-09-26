@@ -67,8 +67,9 @@ class Adventure extends Component {
         this.setState({...data})
         
         console.log(data.error_msg)
-        
-        if (data.error_msg.length !== 0) this.updateMessageHistory("Error Msg", data.error_msg) 
+
+        if (data.players.length > 0) this.updateMessageHistory("Players in Room:", data.players.join(','))
+        if (data.error_msg.length !== 0) this.updateMessageHistory("Error Msg:", data.error_msg) 
         
         this.updateMessageHistory(data.title, data.description)
 

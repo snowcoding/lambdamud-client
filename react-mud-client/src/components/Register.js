@@ -12,14 +12,14 @@ class Register extends Component {
   }
   
   onRegister = () => {
-    let apiBaseUrl = "https://django-mud.herokuapp.com/api/registration/";
+    let apiBaseUrl = "https://django-mud.herokuapp.com/api/";
     let payload = {
       "username": this.state.username,
       "password1": this.state.password1,
       "password2": this.state.password2
     }
 
-    axios.post(apiBaseUrl, payload)
+    axios.post(apiBaseUrl + "registration/", payload)
     .then( (response) => {
       
       console.log(response);
@@ -29,9 +29,24 @@ class Register extends Component {
         
         //Store the Token
         localStorage.setItem('mudToken', response.data.key)
+        let authValue = "Token " + response.data.key
+        let headerWithUserToken = {
+          headers: {"Authorization":authValue}
+        }
+        axios.get(apiBaseUrl + "adv/init/", headerWithUserToken)
+          .then( response => {
 
-        //Redirect to Adventure Game
-        this.props.history.push('/adventure')
+            console.log(response)
+            this.props.initPlayer(response.data)
+
+            //Redirect to Adventure Game
+            this.props.history.push('/adventure')
+
+          })
+          .catch(error => {
+            console.log(error.response)
+          })
+
       }
     })
     .catch((error) => {

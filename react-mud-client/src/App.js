@@ -9,26 +9,46 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userAuthToken: ""
+      userAuthToken: "",
+      uuid:"",
+      name:"",
+      title:"",
+      description:"",
+      players: []
     };
   }
-  componentWillMount() {
 
+  componentWillMount() {
     if (localStorage.getItem("mudToken")) {
       this.setState({ userAuthToken: localStorage.getItem("mudToken") });
     }
   }
 
+  initPlayer = (init) => {
+    this.setState({
+      uuid:init.uuid,
+      name:init.name,
+      players:init.players,
+      title:init.title,
+      description:init.description
+    })
+  }
+
   render() {
     return (
       <div className="App">
-        <Route exact path="/register" component={Register} />
+
+        {/* How to send a prop down to component within a route */}
+        <Route exact path="/register" component={() => <Register initPlayer={this.initPlayer} /> } />
+        
+        
         <Route exact path="/" render={(props) => this.state.userAuthToken ? 
-                        <Redirect to="/adventure" /> : 
+                        // <Redirect to="/adventure" /> : 
+                        <Route path="/adventure" component={Adventure} /> : 
                         <Redirect to="/login" /> }/>
 
-        <Route exact path="/login" component={Login} />  
-        <Route exact path="/adventure" component={Adventure} />
+        <Route exact path="/login" component={Login} />
+        <Route path="/adventure" component={Adventure} />
         
       </div>
     );

@@ -3,6 +3,7 @@ import "./App.css";
 import { Route, Redirect } from "react-router-dom";
 import Login from "./components/Login";
 import Adventure from "./components/Adventure";
+import Register from "./components/Register"
 
 class App extends Component {
   constructor(props) {
@@ -12,7 +13,6 @@ class App extends Component {
     };
   }
   componentWillMount() {
-    localStorage.setItem("test", "pusher");
 
     if (localStorage.getItem("mudToken")) {
       this.setState({ userAuthToken: localStorage.getItem("mudToken") });
@@ -22,10 +22,14 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <Route exact path="/register" component={Register} />
         <Route exact path="/" render={(props) => this.state.userAuthToken ? 
                         <Redirect to="/adventure" /> : 
-                        <Login {...props}/>}/>
-        <Route path="/adventure" component={Adventure} />
+                        <Redirect to="/login" /> }/>
+
+        <Route exact path="/login" component={Login} />  
+        <Route exact path="/adventure" component={Adventure} />
+        
       </div>
     );
   }

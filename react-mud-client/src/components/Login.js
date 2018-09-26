@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 
 class Login extends Component {
   constructor(props) {
@@ -10,18 +10,18 @@ class Login extends Component {
     };
   }
 
-  componentDidMount(){
-    console.log(this.props.history.push(''))
-  }
+  // componentDidMount(){
+  //   console.log(this.props.history.push(''))
+  // }
 
   
   onLogin = () => {
-    var apiBaseUrl = "https://django-mud.herokuapp.com/api/login/";
-    var payload = {
+    let apiBaseUrl = "https://django-mud.herokuapp.com/api/";
+    let payload = {
       "username": this.state.username,
       "password": this.state.password
     }
-    axios.post(apiBaseUrl + 'login', payload)
+    axios.post(apiBaseUrl + 'login/', payload)
       .then( (response) => {
         console.log(response);
         if (response.status === 200) {
@@ -45,6 +45,11 @@ class Login extends Component {
       this.setState({password:e.target.value})
     }
   }
+
+  onRegister = () => {
+    this.props.history.push('/register')
+  }
+
   render() {
     return (
       <div>
@@ -57,9 +62,12 @@ class Login extends Component {
           <input id='password' type="password" className="password" onChange={this.onFieldChange}/>
         </p>
         <button onClick = {this.onLogin}>Login</button>
+        <p>Don't have an account?</p>
+        <button onClick={this.onRegister}>Register Here </button>
       </div>
     );
   }
+
 }
 
 export default Login

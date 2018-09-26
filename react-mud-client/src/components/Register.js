@@ -31,7 +31,6 @@ class Register extends Component {
         localStorage.setItem("mudToken", response.data.key);
 
         //Redirect to Adventure Game
-
         console.log('History push to adventure')
         this.props.history.push("/adventure");
 

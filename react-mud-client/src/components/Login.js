@@ -27,7 +27,7 @@ class Login extends Component {
 
           //Store the Token
           localStorage.setItem("mudToken", response.data.key);
-
+          // this.props.updateAuthToken(response.data.key)
           //Redirect to Adventure Game
 
           console.log('History push to adventure')

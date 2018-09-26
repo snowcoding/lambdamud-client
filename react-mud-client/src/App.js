@@ -25,7 +25,7 @@ class App extends Component {
         <Route exact path="/login" component={(props) => <Login {...props}/>} />
 
         <Route path="/adventure" render={(props) => this.getUserAuthToken() ? 
-                            <Adventure /> :
+                            <Adventure {...props}/> :
                             <Redirect to="/login" /> }/>
         
       </div>

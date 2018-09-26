@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios'
+import axios from 'axios';
+import Pusher from 'pusher-js';
 
 class Adventure extends Component {
   constructor(props) {
@@ -11,7 +12,8 @@ class Adventure extends Component {
       description:"",
       players: [],
       message:"",
-      command:""
+      command:"",
+      pusher:new Pusher('46fd5ac6d676122e963b', {cluster: 'us2',})
     };
   }
 
@@ -25,21 +27,32 @@ class Adventure extends Component {
       .get(apiBaseUrl + "adv/init/", headerWithUserToken)
       .then(response => {
         console.log("Initialization successful");        
-        console.log(response);
+        console.log("Init response:", response);
         
         let data = response.data
-        console.log(data)
+        console.log("Init response data", data)
         
         this.setState({...data})
 
         this.updateMessageHistory(data.title, data.description)
 
+        console.log("response data.uuid:", data.uuid)
+        const sub = "p-channel-"+data.uuid
+        const channel = this.state.pusher.subscribe(sub);
+        
+        console.log('Channel Subscribe',channel)
+    
+        channel.bind('broadcast', data => {
+          console.log("pusher message:", data.message)
+          this.updateMessageHistory('Pusher msg:', data.message)
+        });
 
       })
       .catch(error => {
         console.log("Initialization error");
         console.log(error.response);
       });
+    
   }
 
   initiateCommand = (command, value) => {
@@ -71,6 +84,8 @@ class Adventure extends Component {
         if (data.players.length > 0) this.updateMessageHistory("Players in Room:", data.players.join(','))
         if (data.error_msg.length !== 0) this.updateMessageHistory("Error Msg:", data.error_msg) 
         
+
+
         this.updateMessageHistory(data.title, data.description)
 
 
@@ -147,7 +162,7 @@ class Adventure extends Component {
     return (
       <div>
         <div>
-          <p>WELCOME TO THE ADVENTURE!!! <button onClick={this.onLogout}>Logout</button></p>
+          <p>{`WELCOME ${this.state.name} TO THE ADVENTURE!!!`} <button onClick={this.onLogout}>Logout</button></p>
         </div>
 
         <textarea rows="10" id="messageHistory" readOnly value={this.state.message}/>

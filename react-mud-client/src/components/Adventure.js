@@ -42,6 +42,44 @@ class Adventure extends Component {
       });
   }
 
+  initiateCommand = (command, value) => {
+    let authValue = "Token " + localStorage.getItem('mudToken');
+    
+    let axiosInst = axios.create({
+      baseURL: 'https://django-mud.herokuapp.com/api/',
+      headers: {"Authorization": authValue},
+    });
+    
+    let url = `adv/${command}/`
+    let options = {
+      "direction": value
+    };
+
+    axiosInst
+      .post(url, options)
+      .then(response => {
+        console.log("Initialization successful");        
+        console.log(response);
+        
+        let data = response.data
+        console.log(data)
+        
+        this.setState({...data})
+        
+        console.log(data.error_msg)
+        
+        if (data.error_msg.length !== 0) this.updateMessageHistory("Error Msg", data.error_msg) 
+        
+        this.updateMessageHistory(data.title, data.description)
+
+
+      })
+      .catch(error => {
+        console.log("Initialization error");
+        console.log(error.response);
+      });
+  }
+
   // Grab the command text
   captureCommand = (e) => {
     if (e.target.id === 'command'){
@@ -56,12 +94,34 @@ class Adventure extends Component {
   onCommandKeyPress = (e) => {
 
     // If the user presses enter
-    if (e.charCode == 13) {
+    if (e.charCode === 13) {
       e.preventDefault();
       e.stopPropagation();
       console.log('You clicked enter!!')
 
-      this.updateMessageHistory('this just in', e.target.value)
+      //Grab the message
+      let command = e.target.value.split(' ')
+      console.log(command)
+
+      //Parse the commands
+      if (command.length !== 2){
+        this.updateMessageHistory('Error', 'Please enter a valid command')  
+      }else if (command[0] === 'move'){
+        if (command[1] === 'n' || command[1] === 's' || command[1] === 'e' || command[1] === 'w'){
+          
+          this.initiateCommand(command[0], command[1])
+        }
+        else {
+          this.updateMessageHistory('Error', 'Please enter a valid command')
+        }
+      }else if (command[0] === 'say'){
+        this.updateMessageHistory('Say', 'You said say')
+      }else {
+        this.updateMessageHistory('Error', 'Please enter a valid command')
+      }
+
+      //Update the MessageHistory
+      // this.updateMessageHistory('this just in', e.target.value)
       e.target.value = ''
 
     }

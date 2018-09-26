@@ -28,24 +28,12 @@ class Register extends Component {
         console.log("Register successful");
         
         //Store the Token
-        localStorage.setItem('mudToken', response.data.key)
-        let authValue = "Token " + response.data.key
-        let headerWithUserToken = {
-          headers: {"Authorization":authValue}
-        }
-        axios.get(apiBaseUrl + "adv/init/", headerWithUserToken)
-          .then( response => {
+        localStorage.setItem("mudToken", response.data.key);
 
-            console.log(response)
-            this.props.initPlayer(response.data)
+        //Redirect to Adventure Game
 
-            //Redirect to Adventure Game
-            this.props.history.push('/adventure')
-
-          })
-          .catch(error => {
-            console.log(error.response)
-          })
+        console.log('History push to adventure')
+        this.props.history.push("/adventure");
 
       }
     })

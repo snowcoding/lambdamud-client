@@ -16,19 +16,23 @@ class Login extends Component {
 
   
   onLogin = () => {
-    let apiBaseUrl = "https://django-mud.herokuapp.com/api/";
+    let apiBaseUrl = "https://django-mud.herokuapp.com/api/login/";
     let payload = {
       "username": this.state.username,
       "password": this.state.password
     }
-    axios.post(apiBaseUrl + 'login/', payload)
+
+    axios.post(apiBaseUrl, payload)
       .then( (response) => {
+        
         console.log(response);
+        
         if (response.status === 200) {
-          console.log("Login successfull");
+          console.log("Login successful");
 
           //Store the Token
           localStorage.setItem('mudToken', response.data.key)
+          
           //Redirect to Adventure Game
           this.props.history.push('/adventure')
         }

@@ -11,10 +11,7 @@ class Register extends Component {
     };
   }
   
-  onRegister = (e) => {
-    e.preventDefault();
-
-    console.log('clicked!')
+  onRegister = () => {
     let apiBaseUrl = "https://django-mud.herokuapp.com/api/registration/";
     let payload = {
       "username": this.state.username,
@@ -24,9 +21,12 @@ class Register extends Component {
 
     axios.post(apiBaseUrl, payload)
     .then( (response) => {
+      
       console.log(response);
+      
       if (response.status === 201) {
-        console.log("Register successfull");
+        console.log("Register successful");
+        
         //Store the Token
         localStorage.setItem('mudToken', response.data.key)
 

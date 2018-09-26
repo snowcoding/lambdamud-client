@@ -77,10 +77,17 @@ class Adventure extends Component {
     })
   }
 
+  onLogout = () => {
+    localStorage.removeItem('mudToken')
+    this.props.history.push("/login")
+  }
+
   render() {
     return (
       <div>
-        <p>WELCOME TO THE ADVENTURE!!!</p>
+        <div>
+          <p>WELCOME TO THE ADVENTURE!!! <button onClick={this.onLogout}>Logout</button></p>
+        </div>
 
         <textarea rows="10" id="messageHistory" readOnly value={this.state.message}/>
         {/* <textarea id="messageHistory" defaultValue={this.state.message}/> */}

@@ -44,14 +44,19 @@ const TitleRow = styled(Row)`
   margin-bottom:20px;
 `
 
+const MudContentRow = styled(Row)`
+  margin-top:20px;
+`
+
 const CmdPrompt = styled.input`
   background-color:black;
   color:white;
   caret-color:white;
+  width:100%;
   
 `
 
-const PlayrInRoom = styled.textarea`
+const NearbyPlayers = styled.textarea`
   background-color: black;
   color:white;
   width:100%;
@@ -65,6 +70,10 @@ const CardTitle = styled.div`
 
 const CommandRow = styled(Row)`
   margin-top:20px;
+`
+
+const PlayerName = styled.span`
+  color:red;
 `
 /**
  * Adventure class hold state for all variable that are sent back from server
@@ -82,7 +91,8 @@ class Adventure extends Component {
       players: [],
       message:"",
       pusher:new Pusher('46fd5ac6d676122e963b', {cluster: 'us2',}),
-      currentBG:""
+      currentBG:"",
+      nearPlyrs:""
     };
   }
 
@@ -187,7 +197,8 @@ class Adventure extends Component {
           this.setState({currentBG:imgLookUp[imgKey]})
         })
 
-        if (data.players.length > 0) this.updateMessageHistory("Players in Room:", data.players.join(','))
+        // if (data.players.length > 0) this.updateMessageHistory("Players in Room:", data.players.join(','))
+        if (data.players.length > 0) this.updateNearbyPlayers(data.players)
         if (data.error_msg.length !== 0) this.updateMessageHistory("Error Msg:", data.error_msg) 
         
         this.updateMessageHistory(data.title, data.description)
@@ -281,6 +292,16 @@ class Adventure extends Component {
     })
   }
 
+  //Update the nearby player list with any incoming messages
+  updateNearbyPlayers = (players) => {
+    this.setState({
+      nearPlyrs: players.join('\n')
+    }, ()=> {
+      let nearbyPlayers = document.getElementById('nearbyPlayers')
+      nearbyPlayers.scrollTop = nearbyPlayers.scrollHeight
+    })
+  }
+
   onLogout = () => {
     localStorage.removeItem('mudToken')
     this.props.history.push("/login")
@@ -289,30 +310,32 @@ class Adventure extends Component {
   render() {
     return (
       <Container>
-      <TitleRow>
+      {/* <TitleRow>
         <Col xs="4"></Col>
         <Col xs="4"><WelcomeUser>{`welcome ${this.state.name} !`}</WelcomeUser></Col>
         <Col xs="4"><i className="fas fa-sign-out-alt" style={{color:"white"}} onClick={this.onLogout}></i></Col>
-      </TitleRow>
+      </TitleRow> */}
 
-      <Row>
+      <MudContentRow>
         <Col xs="6">
-          <CardTitle>Message History</CardTitle>
+          <CardTitle><PlayerName>{this.state.name}'s</PlayerName> Message History</CardTitle>
           <div><MessageHist rows="10" id="messageHistory" readOnly value={this.state.message} /></div>
         </Col>
         <Col xs="6">
           <CardTitle>The View</CardTitle>
           <div><RoomImg bgImg={this.state.currentBG}/></div>
           <CardTitle mt={true}>Nearby Players</CardTitle>
-          <div><PlayrInRoom bgImg={this.state.currentBG}/></div>
+          <div><NearbyPlayers id="nearbyPlayers" readOnly value={this.state.nearPlyrs}/></div>
         </Col>
-      </Row>
+      </MudContentRow>
       <CommandRow>
         <Col xs="4"><CardTitle>Enter your command</CardTitle></Col>
         <Col xs="4">
           <CmdPrompt type="text" id="command" onChange={this.captureCommand} onKeyPress={this.onCommandKeyPress}/>
         </Col>
-        <Col xs="4"></Col>
+        <Col xs="4">
+          <i className="fas fa-sign-out-alt" style={{color:"white"}} onClick={this.onLogout}></i>
+        </Col>
       </CommandRow>
     </Container>
 

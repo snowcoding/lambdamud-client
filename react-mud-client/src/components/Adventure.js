@@ -70,12 +70,15 @@ class Adventure extends Component {
     
   }
 
+  componentWillUnmount(){
+    this.state.pusher.disconnect();
+  }
 
 
   /**
    * Initiate Commands to the server
-   * This general purpose function will allow to both move and say
-   * the value will be whatever goes with move and say
+   * @command = {move, say}
+   * @value = {values associated with move/say}
    */
   initiateCommand = (command, value) => {
     

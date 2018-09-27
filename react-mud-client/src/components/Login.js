@@ -1,6 +1,20 @@
 import React, { Component } from "react";
 import axios from "axios";
+import styled from 'styled-components';
+import { Container, Row, Col, Button } from 'reactstrap';
 
+const Label = styled.label`
+  color:#565356;
+  text-align:right;
+`
+
+const LoginRow = styled(Row)`
+  margin-top:20px;
+  margin-bottom:40px;
+`
+const UsernameRow = styled(Row)`
+  margin-top:20px;
+`
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -54,33 +68,40 @@ class Login extends Component {
 
   render() {
     return (
-      <div>
-        <p>
-          <label htmlFor="username" className="username">
-            Username:
-          </label>
-          <input
-            id="username"
-            type="text"
-            className="username"
-            onChange={this.onFieldChange}
-          />
-        </p>
-        <p>
-          <label htmlFor="password" className="password">
-            Password:
-          </label>
-          <input
-            id="password"
-            type="password"
-            className="password"
-            onChange={this.onFieldChange}
-          />
-        </p>
-        <button onClick={this.onLogin}>Login</button>
-        <p>Don't have an account?</p>
-        <button onClick={this.onRegister}>Register Here </button>
-      </div>
+
+      <Container>
+        <UsernameRow>
+          <Col xs="5"></Col>
+          <Col xs="1">
+            <Label htmlFor="username" className="username">Username:</Label>
+          </Col>
+          <Col xs="6">
+            <input id="username" type="text" className="username" onChange={this.onFieldChange}/>
+          </Col>
+        </UsernameRow>
+        <Row>
+          <Col xs="5"></Col>
+          <Col xs="1">
+          <Label htmlFor="password" className="password">Password:</Label>
+          </Col>
+          <Col xs="6">
+          <input id="password" type="password" className="password" onChange={this.onFieldChange}/>
+          </Col>
+        </Row>
+        <LoginRow>
+          <Col xs="7"></Col>
+          <Col xs="2"><Button onClick={this.onLogin}>Login</Button></Col>
+          <Col xs="3"></Col>
+        </LoginRow>
+        <Row>
+          <Col xs="4"></Col>
+          <Col xs="2"><Label htmlFor="register">Don't have an account?</Label></Col>
+          <Col xs="6">
+            <Button id="register" onClick={this.onRegister}>Register Here </Button>
+          </Col>
+        </Row>
+        
+      </Container>
     );
   }
 }

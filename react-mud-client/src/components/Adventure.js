@@ -1,7 +1,71 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Pusher from 'pusher-js';
+import Outside from '../img/OutsideCave_500_281.jpg';
+import Foyer from '../img/Foyer_500_281.png';
+import Grand from '../img/GrandOverlook_500_281.jpg';
+import Narrow from '../img/NarrowPassage_500_281.jpg';
+import Treasure from '../img/TreasureChamber_500_281.jpg';
+import styled from 'styled-components';
+import { Container, Row, Col, Button } from 'reactstrap';
 
+const imgLookUp = {
+  'Outside': Outside,
+  'Foyer' : Foyer,
+  'Grand' : Grand,
+  'Narrow' : Narrow,
+  'Treasure': Treasure
+}
+
+const MessageHist = styled.textarea`
+  background-color: black;
+  color:white;
+  width:100%;
+  height:100%;
+  
+`
+
+const RoomImg = styled.textarea`
+  background-image: url(${props => props.bgImg});
+  background-repeat:no-repeat;
+  background-size: 100%;
+  width:100%;
+`
+const Logout = styled.i`
+  color: white;
+`
+
+const WelcomeUser = styled.div`
+  color:white;
+`
+
+const TitleRow = styled(Row)`
+  margin-top:20px;
+  margin-bottom:20px;
+`
+
+const CmdPrompt = styled.input`
+  background-color:black;
+  color:white;
+  caret-color:white;
+  
+`
+
+const PlayrInRoom = styled.textarea`
+  background-color: black;
+  color:white;
+  width:100%;
+  height:100%;
+`
+
+const CardTitle = styled.div`
+  color: #565356;
+  margin-top: ${(props) => props.mt ? "10px" : "0px"};
+`
+
+const CommandRow = styled(Row)`
+  margin-top:20px;
+`
 /**
  * Adventure class hold state for all variable that are sent back from server
  * message hold the message history
@@ -17,8 +81,8 @@ class Adventure extends Component {
       description:"",
       players: [],
       message:"",
-      // command:"",
-      pusher:new Pusher('46fd5ac6d676122e963b', {cluster: 'us2',})
+      pusher:new Pusher('46fd5ac6d676122e963b', {cluster: 'us2',}),
+      currentBG:""
     };
   }
 
@@ -43,8 +107,13 @@ class Adventure extends Component {
         let data = response.data
         console.log("Init response data", data)
         
+        let imgKey = data.title.split(' ')[0]
+        
         //Spread data and shorthand for set state:
-        this.setState({...data})
+        // this.setState({...data})
+        this.setState({...data}, ()=> {
+          this.setState({currentBG:imgLookUp[imgKey]})
+        })
 
         //Push the initialization messages to the message history
         this.updateMessageHistory(data.title, data.description)
@@ -108,8 +177,15 @@ class Adventure extends Component {
         let data = response.data
         console.log(data)
         
+        let imgKey = data.title.split(' ')[0]
+        console.log(imgKey)
+        console.log(imgLookUp[imgKey])
+
         //Spread data and shorthand for set state:
-        this.setState({...data})
+        // this.setState({...data})
+        this.setState({...data}, ()=> {
+          this.setState({currentBG:imgLookUp[imgKey]})
+        })
 
         if (data.players.length > 0) this.updateMessageHistory("Players in Room:", data.players.join(','))
         if (data.error_msg.length !== 0) this.updateMessageHistory("Error Msg:", data.error_msg) 
@@ -212,16 +288,34 @@ class Adventure extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <p>{`WELCOME ${this.state.name} TO THE ADVENTURE!!!`} <button onClick={this.onLogout}>Logout</button></p>
-        </div>
-        <textarea rows="10" id="messageHistory" readOnly value={this.state.message}/>
-        <div>
-          <input type="text" id="command" onChange={this.captureCommand} onKeyPress={this.onCommandKeyPress}/>
-          <button>Send</button>
-        </div>
-      </div>
+      <Container>
+      <TitleRow>
+        <Col xs="4"></Col>
+        <Col xs="4"><WelcomeUser>{`welcome ${this.state.name} !`}</WelcomeUser></Col>
+        <Col xs="4"><i className="fas fa-sign-out-alt" style={{color:"white"}} onClick={this.onLogout}></i></Col>
+      </TitleRow>
+
+      <Row>
+        <Col xs="6">
+          <CardTitle>Message History</CardTitle>
+          <div><MessageHist rows="10" id="messageHistory" readOnly value={this.state.message} /></div>
+        </Col>
+        <Col xs="6">
+          <CardTitle>The View</CardTitle>
+          <div><RoomImg bgImg={this.state.currentBG}/></div>
+          <CardTitle mt={true}>Nearby Players</CardTitle>
+          <div><PlayrInRoom bgImg={this.state.currentBG}/></div>
+        </Col>
+      </Row>
+      <CommandRow>
+        <Col xs="4"><CardTitle>Enter your command</CardTitle></Col>
+        <Col xs="4">
+          <CmdPrompt type="text" id="command" onChange={this.captureCommand} onKeyPress={this.onCommandKeyPress}/>
+        </Col>
+        <Col xs="4"></Col>
+      </CommandRow>
+    </Container>
+
     );
   }
 }

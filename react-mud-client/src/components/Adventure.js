@@ -329,8 +329,8 @@ class Adventure extends Component {
         </Col>
       </MudContentRow>
       <CommandRow>
-        <Col xs="4"><CardTitle>Enter your command</CardTitle></Col>
-        <Col xs="4">
+        <Col xs="3"><CardTitle>Enter your command</CardTitle></Col>
+        <Col xs="5">
           <CmdPrompt type="text" id="command" onChange={this.captureCommand} onKeyPress={this.onCommandKeyPress}/>
         </Col>
         <Col xs="4">
